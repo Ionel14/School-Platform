@@ -1,0 +1,157 @@
+﻿<UserControl x:Class="ELearning.Views.ClassesManagement"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ELearning.Views"
+             xmlns:converter="clr-namespace:ELearning.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.Resources>
+            <converter:ClassConverter x:Key="ClassConverter"/>
+            <converter:ClassMasterConverter x:Key="ClassMasterConverter"/>
+        </Grid.Resources>
+
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="purple" Offset="0.0" />
+                <GradientStop Color="DarkBlue" Offset="0.6" />
+                <GradientStop Color="purple" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+
+        <Label Name="Specializations" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="AliceBlue" >Specializations</Label>
+        <DataGrid Name="SpecializationsGrid" Grid.Row="1" Margin="10" ItemsSource="{Binding Specializations}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Specialization Name" Binding="{Binding Name}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Label Name="Classes" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="AliceBlue" >Classes</Label>
+        <DataGrid Name="ClassesGrid" Grid.Row="1" Grid.Column="1" Margin="10" ItemsSource="{Binding Classes}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Class Name" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Specialization" Binding="{Binding Specialization.Name}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Label Name="ClassMasters" Grid.Column="2" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20" Foreground="AliceBlue" >ClassMasters</Label>
+        <DataGrid Name="ClassMastersGrid" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="3" Margin="10" ItemsSource="{Binding ClassMasters}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Teacher FirstName" Binding="{Binding Teacher.Person.FirstName}"/>
+                <DataGridTextColumn Header="Teacher LastName" Binding="{Binding Teacher.Person.LastName}"/>
+                <DataGridTextColumn Header="Class Name" Binding="{Binding Class.Name}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Grid Grid.Row="2" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label Foreground="White" Grid.Row="1" VerticalAlignment="Top" FontSize="10">SpecializationName*</Label>
+            <TextBox Name="SpecializationName" Grid.Row="2" Margin="5, 0"></TextBox>
+
+            <Label Foreground="White" Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" FontSize="10">ClassName*</Label>
+            <TextBox Name="ClassName" Grid.Row="2" Grid.Column="2" Margin="5, 0"></TextBox>
+
+            <Label Foreground="White" Grid.Row="3" Grid.Column="2" VerticalAlignment="Top" FontSize="10">Specialization</Label>
+            <ComboBox Name="Specialization" Grid.Row="4" Grid.Column="2" Margin="5, 0" ItemsSource="{Binding Specializations}" DisplayMemberPath="Name" ></ComboBox>
+
+            <Button Grid.Row="1" Grid.Column="1" Margin="20,0" Grid.RowSpan="2" Command="{Binding AddSpecializationCommand}" Content="Add">
+                <Button.CommandParameter>
+                    <Binding ElementName="SpecializationName" Path="Text" />
+                </Button.CommandParameter>
+            </Button>
+
+            <Button Grid.Row="4" Grid.Column="1" Margin="20,0" Grid.RowSpan="2" Command="{Binding DeleteSpecializationCommand}" Content="Delete">
+                <Button.CommandParameter>
+                    <Binding ElementName="SpecializationsGrid" Path="SelectedItem" />
+                </Button.CommandParameter>
+            </Button>
+
+            <Button Grid.Row="1" Grid.Column="4" Margin="10,0" Grid.RowSpan="2" Command="{Binding AddClassCommand}" Content="Add/Update">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource ClassConverter}">
+                        <Binding ElementName="ClassName" Path="Text" />
+                        <Binding ElementName="Specialization" Path="SelectedValue"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
+
+            <Button Grid.Row="4" Grid.Column="4" Margin="20,0" Grid.RowSpan="2" Command="{Binding DeleteClassCommand}" Content="Delete">
+                <Button.CommandParameter>
+                    <Binding ElementName="ClassesGrid" Path="SelectedItem" />
+                </Button.CommandParameter>
+            </Button>
+        </Grid>
+
+        <Grid Margin="10,10" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label Foreground="White" VerticalAlignment="Top" FontSize="10">Class</Label>
+            <ComboBox Name="ClassBox" Grid.Row="1" Margin="5, 0" ItemsSource="{Binding Classes}" DisplayMemberPath="Name" ></ComboBox>
+
+            <Label Foreground="White" Grid.Row="2" VerticalAlignment="Top" FontSize="10">Teacher</Label>
+            <ComboBox Name="TeachersBox" Grid.Row="3" Margin="5, 0" ItemsSource="{Binding Teachers}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                <Run Text="{Binding Person.FirstName}" />
+                <Run Text="{Binding Person.LastName}" />
+                        </TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            
+            <Button Grid.Row="1" Grid.Column="1" Margin="20,0" Command="{Binding AddClassMasterCommand}" Content="Add">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource ClassMasterConverter}">
+                        <Binding ElementName="ClassBox" Path="SelectedItem" />
+                        <Binding ElementName="TeachersBox" Path="SelectedItem" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
+
+            <Button Grid.Row="3" Grid.Column="1" Margin="20,0" Command="{Binding DeleteClassMasterCommand}" Content="Delete">
+                <Button.CommandParameter>
+                    <Binding ElementName="ClassMastersGrid" Path="SelectedItem" />
+                </Button.CommandParameter>
+            </Button>
+        </Grid>
+    </Grid>
+</UserControl>
